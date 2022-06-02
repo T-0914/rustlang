@@ -1,4 +1,4 @@
-use sublist::{match_all, slice, sublist};
+use sublist::sublist;
 
 pub fn main() {
     let first_list = vec![1, 2, 3];
