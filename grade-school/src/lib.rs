@@ -1,3 +1,5 @@
+pub mod school_hashmap;
+
 // This annotation prevents Clippy from warning us that `School` has a
 // `fn new()` with no arguments, but doesn't implement the `Default` trait.
 //
