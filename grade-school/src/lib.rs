@@ -1,3 +1,4 @@
+pub mod school_btreemap;
 pub mod school_hashmap;
 
 // This annotation prevents Clippy from warning us that `School` has a

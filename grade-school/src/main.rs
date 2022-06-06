@@ -1,9 +1,10 @@
 // use grade_school::School;
-
-use grade_school::school_hashmap::SchoolHashMap;
+// use grade_school::school_hashmap::SchoolHashMap;
+use grade_school::school_btreemap::SchoolBTreeMap;
 
 fn main() {
-    let mut school = SchoolHashMap::new();
+    let mut school = SchoolBTreeMap::<u32>::new();
+
     school.add(1, "S1");
     school.add(1, "S11");
     school.add(1, "S12");
@@ -15,9 +16,26 @@ fn main() {
     school.add(2, "S24");
     school.add(2, "S25");
 
-    println!("{:#?}", school.grade(1));
-    println!("{:#?}", school.grade(2));
+    println!("grade 1 {:#?}", school.grade(1));
+    println!("grade 2 {:#?}", school.grade(2));
     println!("grades: {:#?}", school.grades());
+
+    // // Test for SchoolHashMap
+    // let mut school = SchoolHashMap::new();
+    // school.add(1, "S1");
+    // school.add(1, "S11");
+    // school.add(1, "S12");
+    // school.add(1, "S13");
+    // school.add(2, "S2");
+    // school.add(2, "S23");
+    // school.add(2, "S22");
+    // school.add(2, "S21");
+    // school.add(2, "S24");
+    // school.add(2, "S25");
+
+    // println!("{:#?}", school.grade(1));
+    // println!("{:#?}", school.grade(2));
+    // println!("grades: {:#?}", school.grades());
 
     // // Test for School
     // let mut school = School::new();
