@@ -1,0 +1,18 @@
+{
+    "recommendations": [
+        "rust-lang.rust-analyzer",
+        "bungcip.better-toml",
+        "streetsidesoftware.code-spell-checker",
+        "vadimcn.vscode-lldb",
+        "serayuzgur.crates",
+        "usernamehw.errorlens",
+        "donjayamanne.githistory",
+        "felipecaputo.git-project-manager",
+        "eamodio.gitlens",
+        "benjaminadk.emojis4git",
+        "swellaby.rust-pack",
+        "dustypomerleau.rust-syntax",
+        "belfz.search-crates-io",
+        "statiolake.vscode-rustfmt"
+    ]
+}
