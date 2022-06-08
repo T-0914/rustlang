@@ -1,9 +1,11 @@
 {
   "cSpell.words": [
     "btreemap",
+    "datetime",
     "dedup",
     "divmod",
     "fibb",
+    "gigasecond",
     "itertools",
     "sublist",
     "superlist",
