@@ -6,6 +6,7 @@
     "divmod",
     "fibb",
     "gigasecond",
+    "hashset",
     "itertools",
     "sublist",
     "superlist",
