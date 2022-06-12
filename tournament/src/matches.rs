@@ -1,154 +1,92 @@
-use std::collections::HashMap;
+use crate::{Team, TeamName};
+use std::collections::BTreeMap;
 
-use crate::Match;
 const MATCHES_DIVIDER: char = '\n';
 const TEAM_DIVIDER: char = ';';
-// const MATCH_RESULT_SIZE: usize = 3;
-
-#[derive(Debug)]
-enum MatchResult {
-    Win,
-    Draw,
-    Loss,
-}
-#[derive(Debug)]
-struct MatchReport<'a> {
-    first_team: &'a str,
-    second_team: &'a str,
-    result: MatchResult,
-}
+const WIN: &str = "win";
+const DRAW: &str = "draw";
+const LOSS: &str = "loss";
 
 /// .
-pub fn format_matches<'a>(match_results: &'a str) -> Vec<Match> {
-    let splitted_match_results: Vec<&str> = self::split(&match_results, MATCHES_DIVIDER);
-    let mut result: HashMap<&'a str, Match> = HashMap::new();
+pub fn format_matches<'a>(match_results: &'a str) -> BTreeMap<TeamName, Team> {
+    let mut teams: BTreeMap<TeamName, Team> = list_team(match_results);
+    count_point_for_teams(&mut teams, match_results);
+    teams
+}
 
-    splitted_match_results.into_iter().for_each(|match_result| {
-        let match_report: MatchReport = MatchReport {
-            first_team: &self::split(match_result, TEAM_DIVIDER)[0],
-            second_team: &self::split(match_result, TEAM_DIVIDER)[1],
-            result: map_match_result(self::split(match_result, TEAM_DIVIDER)[2]),
+fn list_team(match_results: &str) -> BTreeMap<TeamName, Team> {
+    let mut teams: BTreeMap<String, Team> = BTreeMap::new();
+    let _match_results: String = replace_break_line(match_results);
+    let splitted_match_result: Vec<&str> = split(&_match_results, TEAM_DIVIDER);
+    let mut raw_teams: Vec<&str> = removed_wrong_value(splitted_match_result);
+
+    raw_teams.sort();
+    raw_teams.dedup();
+
+    for team in raw_teams {
+        let new_team = Team {
+            matches_played: 0,
+            matches_won: 0,
+            matches_drawn: 0,
+            matches_lost: 0,
+            points: 0,
         };
-        println!("{:#?}", match_report);
-        let result = &mut result;
+        teams.insert(team.to_string(), new_team);
+    }
+    teams
+}
 
-        match match_report.result {
-            MatchResult::Win => {
-                if !result.contains_key(&match_report.first_team) {
-                    result.insert(
-                        match_report.first_team,
-                        Match {
-                            team: match_report.first_team,
-                            matches_played: 1,
-                            matches_won: 1,
-                            matches_drawn: 0,
-                            matches_lost: 0,
-                            points: 3,
-                        },
-                    );
-                } else {
-                    let old_result = result.get(&match_report.first_team);
-                    result.insert(
-                        match_report.first_team,
-                        Match {
-                            team: match_report.first_team,
-                            matches_played: old_result.unwrap().matches_played + 1,
-                            matches_won: old_result.unwrap().matches_won + 1,
-                            matches_drawn: old_result.unwrap().matches_drawn,
-                            matches_lost: old_result.unwrap().matches_lost,
-                            points: old_result.unwrap().points + 3,
-                        },
-                    );
+fn count_point_for_teams(teams: &mut BTreeMap<TeamName, Team>, match_results: &str) {
+    let _match_results: String = replace_break_line(match_results);
+    let splitted_match_result: Vec<&str> = split(&_match_results, TEAM_DIVIDER);
+    let chucks_of_matches = splitted_match_result.chunks(3);
+
+    for chuck in chucks_of_matches.into_iter() {
+        for (index, &seq) in chuck.iter().enumerate() {
+            match seq {
+                WIN => {
+                    let won_team = teams.get_mut(chuck[index - 2]).unwrap();
+                    won_team.update_for_win();
+
+                    let loss_team = teams.get_mut(chuck[index - 1]).unwrap();
+                    loss_team.update_for_loss();
                 }
-            }
-            MatchResult::Draw => {
-                if !result.contains_key(&match_report.first_team) {
-                    result.insert(
-                        match_report.first_team,
-                        Match {
-                            team: match_report.first_team,
-                            matches_played: 1,
-                            matches_won: 0,
-                            matches_drawn: 1,
-                            matches_lost: 0,
-                            points: 1,
-                        },
-                    );
-                } else {
-                    let old_result = result.get(&match_report.first_team);
-                    result.insert(
-                        match_report.first_team,
-                        Match {
-                            team: match_report.first_team,
-                            matches_played: old_result.unwrap().matches_played + 1,
-                            matches_won: old_result.unwrap().matches_won,
-                            matches_drawn: old_result.unwrap().matches_drawn + 1,
-                            matches_lost: old_result.unwrap().matches_lost,
-                            points: old_result.unwrap().points + 1,
-                        },
-                    );
+                DRAW => {
+                    let first_team = teams.get_mut(chuck[index - 2]).unwrap();
+                    first_team.update_for_draw();
+
+                    let second_team = teams.get_mut(chuck[index - 1]).unwrap();
+                    second_team.update_for_draw();
                 }
-            }
-            MatchResult::Loss => {
-                if !result.contains_key(&match_report.first_team) {
-                    result.insert(
-                        match_report.first_team,
-                        Match {
-                            team: match_report.first_team,
-                            matches_played: 1,
-                            matches_won: 0,
-                            matches_drawn: 0,
-                            matches_lost: 1,
-                            points: 0,
-                        },
-                    );
-                } else {
-                    let old_result = result.get(&match_report.first_team);
-                    result.insert(
-                        match_report.first_team,
-                        Match {
-                            team: match_report.first_team,
-                            matches_played: old_result.unwrap().matches_played + 1,
-                            matches_won: old_result.unwrap().matches_won,
-                            matches_drawn: old_result.unwrap().matches_drawn,
-                            matches_lost: old_result.unwrap().matches_lost + 1,
-                            points: old_result.unwrap().points,
-                        },
-                    );
+                LOSS => {
+                    let loss_team = teams.get_mut(chuck[index - 2]).unwrap();
+                    loss_team.update_for_loss();
+
+                    let won_team = teams.get_mut(chuck[index - 1]).unwrap();
+                    won_team.update_for_win();
                 }
+                _ => continue,
             }
         }
-    });
-
-    println!("{:#?}", result);
-    let match_1 = Match {
-        team: "1111",
-        matches_played: 1,
-        matches_won: 1,
-        matches_drawn: 0,
-        matches_lost: 0,
-        points: 3,
-    };
-    vec![match_1]
+    }
 }
 
 fn split(string: &str, divider: char) -> Vec<&str> {
-    string.split(divider).collect()
+    string.split(divider).collect::<Vec<&str>>()
 }
 
-// fn create_report_struct<'a>(data: &'a Vec<&str>) -> MatchReport<'a> {
-//     MatchReport {
-//         first_team: &data[0].to_string(),
-//         second_team: &data[1].to_string(),
-//         result: map_match_result(data[2]),
-//     }
-// }
+fn replace_break_line(seq: &str) -> String {
+    seq.replace(MATCHES_DIVIDER, &TEAM_DIVIDER.to_string())
+}
 
-fn map_match_result(result: &str) -> MatchResult {
-    match result {
-        "win" => MatchResult::Win,
-        "draw" => MatchResult::Draw,
-        "loss" => MatchResult::Loss,
-        _ => panic!("Unexpected invalid token"),
-    }
+fn removed_wrong_value(list_teams: Vec<&str>) -> Vec<&str> {
+    list_teams
+        .iter()
+        .filter(|&&seq| is_not_a_team(seq))
+        .cloned()
+        .collect()
+}
+
+fn is_not_a_team(seq: &str) -> bool {
+    seq != WIN && seq != DRAW && seq != LOSS
 }
